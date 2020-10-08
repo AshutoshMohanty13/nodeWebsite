@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
-const db = require('./util/database');
+const sequelize = require('./util/database');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -27,6 +27,18 @@ app.use(shopRoutes);
 app.use((req, res, next) => {
   res.status(404).render('404', { pageTitle: 'Page Not Found' });
 });
+
+
+//it syncs you model to the database by creating the tables if its not already there, and if its already
+//present then it doesnt overwrite it.
+sequelize.sync()
+  .then(result => {
+    //console.log(result);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
 
 const server = app.listen(9000, () =>{
   console.log("listening on port %s-", server.address().port);
